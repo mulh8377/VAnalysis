@@ -3,6 +3,8 @@ module main
 import (
 	range
 	typef
+	tokenf
+	computef
 )
 
 struct Function {
@@ -12,7 +14,7 @@ struct Function {
 mut:
 	arr []int	// built from typef
 	r []int		// range
-	res []int	// results
+	res []f64	// results
 }
 pub fn initialize_function(func string, t int, A int, B int) Function {
 	rng := range.initialize_range(A, B)
@@ -35,76 +37,37 @@ pub fn (func mut Function) init_arr() {
 	//println(func.arr)
 }
 
-pub fn (func mut Function) set_arr(A int, B int) {
-	if func.typef == 0 {
-		func.arr[0] = A
-		func.arr[1] = B
-	}
-	else {
-		println('still owrking on her')
-	}
+pub fn (func mut Function) set_arr(ARR []int) {
+	func.arr = ARR
 }
 
-pub fn (func mut Function) set_results(res []int ) {
+pub fn (func mut Function) set_results(res []f64 ) {
 	func.res = res
 }
 
-pub fn (func mut Function) do_work() {
-	expression := func.f
-	//expansion := func.expand(expression)
-	results := func.tokenzr(expression)
-	func.set_results(results)
-}
-
-pub fn (func Function) expand() []int {
-	mut res_eval := []int
+pub fn (func Function) expand() []f64 {
+	mut res_eval := []f64
 	a_int := func.arr[0]
 	b_int := func.arr[1]
 	for i := func.r[1]; i > func.r[0]; i-- {
-		res_eval << evaluate_lin(a_int, i, b_int)
+		res_eval << computef.evaluate_lin(a_int, i, b_int)
 	}
 	return res_eval.reverse()
 }
 
-pub fn (func mut Function) tokenzr(expr string) []int {
-	mut res_eval := []int
-	mut a_int := 0
-	mut b_int := 0
-	splt := expr.split(' ')
+pub fn (func mut Function) do_work() {
+	// get expression
+	expression := func.f
+	// returns a and b
+	tokens := tokenf.tokenizef(expression)
+	// sets the a and b
+	func.set_arr(tokens)
+	// does the computation
+	results := func.expand()
+	// stores the computation to the function..
+	func.set_results(results)
 
-	for s in splt {
-		if s.ends_with('x') {
-			//x_index := s.len - 1
-			//a_index := x_index - 1
-
-			//println(x_index)
-			//println(a_index)
-
-			a_val := s.trim('x')
-			a_int = a_val.int()
-			//println(a_val)
-			//println(a_int)
-		}
-
-		else if s.contains('+') {
-			continue
-		}
-		else {
-			b_val := s
-			b_int = b_val.int()
-			//println(b_int)
-		}
-	}
-	//println(splt)
-	func.set_arr(a_int, b_int)
-	res_eval = func.expand()
-	return res_eval
 }
-
-fn evaluate_lin(a int, x int, b int) int {
-	return a * x + b
-}
-
 
 
 pub fn main() {
