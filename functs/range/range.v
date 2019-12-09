@@ -18,6 +18,6 @@ pub fn (r mut Range) set_range(A int, B int) {
 pub fn (r Range) get_range() []int {
 	mut range := []int
 	range << r.a
-	range << r. b
+	range << r.b
 	return range
 }
