@@ -61,7 +61,7 @@ pub fn (func Function) expand() []int {
 	a_int := func.arr[0]
 	b_int := func.arr[1]
 	for i := func.r[1]; i > func.r[0]; i-- {
-		res_eval << evaluate(a_int, i, b_int)
+		res_eval << evaluate_lin(a_int, i, b_int)
 	}
 	return res_eval.reverse()
 }
@@ -101,7 +101,7 @@ pub fn (func mut Function) tokenzr(expr string) []int {
 	return res_eval
 }
 
-fn evaluate(a int, x int, b int) int {
+fn evaluate_lin(a int, x int, b int) int {
 	return a * x + b
 }
 
