@@ -12,24 +12,24 @@ struct Function {
 	typef int
 	var string	// variable
 mut:
-	arr []int	// built from typef
-	r []int		// range
-	res []f64	// results
+	arr []int			// built from typef
+	domain []int		// x-range
+	output []f64		// output from x-range
 }
 pub fn initialize_function(func string, t int, A int, B int) Function {
 	rng := range.initialize_range(A, B)
-	mut function := Function{f:func, typef: t, r: rng.get_range(), var: 'x'}
+	mut function := Function{f:func, typef: t, domain: rng.get_range(), var: 'x'}
 	function.init_arr()
 	return function
 }
 
 pub fn (func Function) print() string {
-	return '{function:$func.f, interval: $func.r, variables: $func.var}'
+	return '{function:$func.f, interval: $func.domain, variables: $func.var}'
 }
 
 pub fn (func Function) print_results() {
 	println(func.print())
-	println(func.res.str())
+	println(func.output.str())
 }
 
 pub fn (func mut Function) init_arr() {
@@ -41,30 +41,30 @@ pub fn (func mut Function) set_arr(ARR []int) {
 	func.arr = ARR
 }
 
-pub fn (func mut Function) set_results(res []f64 ) {
-	func.res = res
+pub fn (func mut Function) set_results(output []f64 ) {
+	func.output = output
 }
 
 pub fn (func Function) expand() []f64 {
 	mut res_eval := []f64
 	a_int := func.arr[0]
 	b_int := func.arr[1]
-	for i := func.r[1]; i > func.r[0]; i-- {
+	for i := func.domain[1]; i > func.domain[0]; i-- {
 		res_eval << computef.evaluate_lin(a_int, i, b_int)
 	}
 	return res_eval.reverse()
 }
 
 pub fn (func mut Function) do_work() {
-	// get expression
+							// get expression
 	expression := func.f
-	// returns a and b
+							// returns a and b
 	tokens := tokenf.tokenizef(expression)
-	// sets the a and b
+							// sets the a and b
 	func.set_arr(tokens)
-	// does the computation
+							// does the computation
 	results := func.expand()
-	// stores the computation to the function..
+							// stores the computation to the function..
 	func.set_results(results)
 
 }
