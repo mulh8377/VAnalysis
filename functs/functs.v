@@ -2,18 +2,23 @@ module main
 
 import (
 	range
+	typef
 )
 
 struct Function {
 	f string
+	typef int
+	var string	// variable
 mut:
-	r []int
-	var string
-	res []int
+	arr []int	// built from typef
+	r []int		// range
+	res []int	// results
 }
-pub fn initialize_function(func string, A int, B int) Function {
+pub fn initialize_function(func string, t int, A int, B int) Function {
 	rng := range.initialize_range(A, B)
-	return Function{f:func, r: rng.get_range(), var: 'x'}
+	mut function := Function{f:func, typef: t, r: rng.get_range(), var: 'x'}
+	function.init_arr()
+	return function
 }
 
 pub fn (func Function) print() string {
@@ -25,26 +30,43 @@ pub fn (func Function) print_results() {
 	println(func.res.str())
 }
 
+pub fn (func mut Function) init_arr() {
+	func.arr = typef.get_type(func.typef)
+	//println(func.arr)
+}
+
+pub fn (func mut Function) set_arr(A int, B int) {
+	if func.typef == 0 {
+		func.arr[0] = A
+		func.arr[1] = B
+	}
+	else {
+		println('still owrking on her')
+	}
+}
+
 pub fn (func mut Function) set_results(res []int ) {
 	func.res = res
 }
 
-pub fn (func Function) do_work() []int {
+pub fn (func mut Function) do_work() {
 	expression := func.f
 	//expansion := func.expand(expression)
 	results := func.tokenzr(expression)
-	return results
+	func.set_results(results)
 }
 
-pub fn (func Function) expand(expression string) []string {
-	mut res := []string
-	for i := func.r[0]; i < func.r[1]; i++ {
-		res << expression
-	} 
-	return res
+pub fn (func Function) expand() []int {
+	mut res_eval := []int
+	a_int := func.arr[0]
+	b_int := func.arr[1]
+	for i := func.r[1]; i > func.r[0]; i-- {
+		res_eval << evaluate(a_int, i, b_int)
+	}
+	return res_eval.reverse()
 }
 
-pub fn (func Function) tokenzr(expr string) []int {
+pub fn (func mut Function) tokenzr(expr string) []int {
 	mut res_eval := []int
 	mut a_int := 0
 	mut b_int := 0
@@ -52,8 +74,8 @@ pub fn (func Function) tokenzr(expr string) []int {
 
 	for s in splt {
 		if s.ends_with('x') {
-			x_index := s.len - 1
-			a_index := x_index - 1
+			//x_index := s.len - 1
+			//a_index := x_index - 1
 
 			//println(x_index)
 			//println(a_index)
@@ -73,12 +95,10 @@ pub fn (func Function) tokenzr(expr string) []int {
 			//println(b_int)
 		}
 	}
-
-	for i := func.r[1]; i > func.r[0]; i-- {
-		res_eval << evaluate(a_int, i, b_int)
-	} 
 	//println(splt)
-	return res_eval.reverse()
+	func.set_arr(a_int, b_int)
+	res_eval = func.expand()
+	return res_eval
 }
 
 fn evaluate(a int, x int, b int) int {
@@ -89,9 +109,9 @@ fn evaluate(a int, x int, b int) int {
 
 pub fn main() {
 	//println('test...')
-	mut f_test := initialize_function('25x + 5', -10, 10)
-	results := f_test.do_work()
-	f_test.set_results(results)
+	mut f_test := initialize_function('25x + 5', 0, -10, 10)
+	f_test.do_work()
+	//f_test.set_results(results)
 
 	f_test.print_results()
 }
